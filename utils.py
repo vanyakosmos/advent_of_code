@@ -13,6 +13,10 @@ def read_data(full: int) -> list[str]:
     return data.splitlines()
 
 
+def noop(*args, **kwargs):
+    pass
+
+
 def print_result(res) -> None:
     print("\n\nRESULT:", res)
 

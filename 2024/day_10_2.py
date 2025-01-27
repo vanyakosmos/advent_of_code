@@ -19,7 +19,6 @@ def main():
     res = 0
     dirs = ((0, 1), (0, -1), (1, 0), (-1, 0))
     for y, x in heads:
-        nines = set()
         queue = deque([(y, x)])
         visited = set()
 
@@ -35,12 +34,10 @@ def main():
                     print("diff", grid[ny][nx], grid[cy][cx])
                     if grid[ny][nx] - grid[cy][cx] == 1:
                         if grid[ny][nx] == 9:
-                            nines.add((ny, nx))
+                            res += 1
                         else:
                             queue.append((ny, nx))
             visited.add((cy, cx))
-
-        res += len(nines)
 
     print_result(res)
 
