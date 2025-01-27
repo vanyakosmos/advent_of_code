@@ -192,3 +192,4 @@ cython_debug/
 
 ### custom
 *.txt
+.session
