@@ -32,5 +32,5 @@ def main() -> None:
     print("\n\nRESULT:", res)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
