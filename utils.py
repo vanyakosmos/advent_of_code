@@ -1,20 +1,41 @@
+import enum
 import sys
 from pathlib import Path
 
 from urllib.request import Request, urlopen
 
 
-def read_data(full: int) -> list[str]:
-    if full:
-        data = _load_input_data()
+def read_data(data: str | None = None) -> list[str]:
+    if data:
+        data = data.strip(" \n")
     else:
-        example_path = Path(__file__).parent / "example.txt"
-        data = example_path.read_text()
+        data = _load_input_data()
     return data.splitlines()
 
 
 def noop(*args, **kwargs):
     pass
+
+
+def show_grid(grid: list[list[str]]):
+    for row in grid:
+        print(" ".join(row))
+    print()
+
+
+class Color(enum.StrEnum):
+    HEADER = "\033[95m"
+    BLUE = "\033[94m"
+    CYAN = "\033[96m"
+    GREEN = "\033[92m"
+    YELLOW = "\033[93m"
+    RED = "\033[91m"
+    END = "\033[0m"
+    BOLD = "\033[1m"
+    UNDERLINE = "\033[4m"
+
+    def __call__(self, v):
+        return f"{self}{v}{Color.END}"
 
 
 def print_result(res) -> None:
