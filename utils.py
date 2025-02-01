@@ -5,12 +5,13 @@ from pathlib import Path
 from urllib.request import Request, urlopen
 
 
-def read_data(data: str | None = None) -> list[str]:
-    if data:
-        data = data.strip(" \n")
-    else:
+def read_data(*examples) -> list[str]:
+    if len(sys.argv) == 1:
         data = _load_input_data()
-    return data.splitlines()
+    else:
+        index = int(sys.argv[-1]) - 1
+        data = examples[index]
+    return data.strip(" \n").splitlines()
 
 
 def noop(*args, **kwargs):
@@ -39,7 +40,7 @@ class Color(enum.StrEnum):
 
 
 def print_result(res) -> None:
-    print("\n\nRESULT:", res)
+    print("\n\nRESULT:", Color.YELLOW(res))
 
 
 def _load_input_data() -> str:
