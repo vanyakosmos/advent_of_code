@@ -5,6 +5,10 @@ from pathlib import Path
 from urllib.request import Request, urlopen
 
 
+RUNNING_EXAMPLE = len(sys.argv) > 1
+DIRS = ((0, 1), (1, 0), (0, -1), (-1, 0))
+
+
 def read_data(*examples) -> list[str]:
     if len(sys.argv) == 1:
         data = _load_input_data()
