@@ -1,10 +1,10 @@
+import contextvars
 import enum
 import sys
 from pathlib import Path
-
 from urllib.request import Request, urlopen
 
-
+YEAR_DAY = contextvars.ContextVar("year,day")
 RUNNING_EXAMPLE = len(sys.argv) > 1
 DIRS = ((0, 1), (1, 0), (0, -1), (-1, 0))
 
@@ -47,11 +47,19 @@ def print_result(res) -> None:
     print("\n\nRESULT:", Color.YELLOW(res))
 
 
+def _get_meta() -> tuple[str, str]:
+    if YEAR_DAY.get(None):
+        return YEAR_DAY.get()
+    else:
+        script_path = Path(sys.argv[0])
+        year = script_path.parent.parent.name
+        day = script_path.parent.name
+        return year, day
+
+
 def _load_input_data() -> str:
     root = Path(__file__).parent
-    script_path = Path(sys.argv[0])
-    year = script_path.parent.parent.name
-    day = script_path.parent.name
+    year, day = _get_meta()
 
     cache_dir = root / ".cache"
     cache_file = cache_dir / f"{year}_{day}.txt"
