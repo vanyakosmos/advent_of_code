@@ -27,7 +27,7 @@ def _get_meta() -> tuple[str, str]:
 
 
 def _load_input_data() -> str:
-    root = Path(__file__).parent
+    root = Path(__file__).parent.parent
     year, day = _get_meta()
 
     cache_dir = root / ".cache"
