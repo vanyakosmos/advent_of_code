@@ -1,6 +1,7 @@
 from collections import deque
 
-from utils import print_result, read_data
+from utils.display import print_result
+from utils.loading import read_data
 
 
 def count_sides(
@@ -63,7 +64,7 @@ def explore(grid: list[list[str]], y: int, x: int, visited: set[tuple[int, int]]
 
 def main():
     grid = []
-    for line in read_data(1):
+    for line in read_data():
         grid.append(list(line))
 
     m, n = len(grid), len(grid[0])

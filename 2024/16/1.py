@@ -1,6 +1,7 @@
 import heapq
 
-from utils import print_result, read_data
+from utils.display import print_result
+from utils.loading import read_data
 
 e1 = """
 ###############

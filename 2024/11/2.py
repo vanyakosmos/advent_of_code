@@ -1,7 +1,8 @@
 from collections import defaultdict
 from functools import lru_cache
 
-from utils import print_result, read_data
+from utils.display import print_result
+from utils.loading import read_data
 
 
 def algo(n: int) -> list[int]:
@@ -31,7 +32,7 @@ def run(n, it) -> int:
 
 
 def main():
-    line = read_data(1)[0]
+    line = read_data()[0]
     nums = [int(n) for n in line.split()]
     res = 0
     for n in nums:

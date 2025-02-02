@@ -1,6 +1,7 @@
 import math
 
-from utils import print_result, read_data
+from utils.display import print_result
+from utils.loading import read_data
 
 
 def lcm(a, b):
@@ -32,7 +33,7 @@ def read_vars(line: str, sep="+"):
 
 
 def main():
-    lines = read_data(1)
+    lines = read_data()
     res = 0
     for i in range(0, len(lines), 4):
         ax, ay = read_vars(lines[i])

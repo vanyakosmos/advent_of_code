@@ -1,13 +1,13 @@
 import re
 
-from utils import print_result, read_data
+from utils.loading import print_result, read_data
 
 
 def main() -> None:
     exp_re = re.compile(r"mul\((\d+),(\d+)\)|(do\(\))|(don't\(\))")
     res = 0
     enabled = True
-    for line in read_data(1):
+    for line in read_data():
         for a, b, do, dont in exp_re.findall(line):
             if do:
                 enabled = True

@@ -1,7 +1,7 @@
 import importlib
 from pathlib import Path
 
-from utils import YEAR_DAY
+from utils.loading import YEAR_DAY
 
 
 def main():

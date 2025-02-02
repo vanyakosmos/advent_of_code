@@ -1,4 +1,5 @@
-from utils import Color, print_result, read_data
+from utils.display import Color, print_result
+from utils.loading import read_data
 
 e1 = """
 r, wr, b, g, bwu, rb, gb, br

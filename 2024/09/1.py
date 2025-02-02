@@ -1,8 +1,9 @@
-from utils import print_result, read_data
+from utils.display import print_result
+from utils.loading import read_data
 
 
 def main():
-    line = read_data(1)[0]
+    line = read_data()[0]
 
     strip = []
     for i, v in enumerate(line):

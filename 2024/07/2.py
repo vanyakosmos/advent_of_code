@@ -1,11 +1,12 @@
 import itertools
 
-from utils import print_result, read_data
+from utils.display import print_result
+from utils.loading import read_data
 
 
 def main() -> None:
     res = 0
-    for line in read_data(1):
+    for line in read_data():
         sum_num, nums = line.split(": ")
         sum_num = int(sum_num)
         nums = [int(n) for n in nums.split(" ")]

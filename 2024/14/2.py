@@ -1,6 +1,7 @@
 import zlib
 
-from utils import print_result, read_data
+from utils.display import print_result
+from utils.loading import read_data
 
 
 def read_vals(line: str):
@@ -16,12 +17,12 @@ def make_string(robots, m, n):
 
 
 def main():
-    # inp, m, n = 0, 7, 11
-    inp, m, n = 1, 103, 101
+    # m, n = 7, 11
+    m, n = 103, 101
 
     robots = []
 
-    for line in read_data(inp):
+    for line in read_data():
         p, v = line.split(" ")
         px, py = read_vals(p)
         vx, vy = read_vals(v)

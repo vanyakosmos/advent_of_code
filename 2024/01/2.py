@@ -1,10 +1,10 @@
 from collections import defaultdict
 
-from utils import read_data
+from utils.loading import read_data
 
 
 def main():
-    lines = read_data(1)
+    lines = read_data()
     c1 = []
     c2 = []
     for line in lines:

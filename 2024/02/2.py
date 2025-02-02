@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from utils import read_data
+from utils.loading import read_data
 
 
 def main() -> None:
@@ -14,7 +14,7 @@ def main() -> None:
         return all(1 <= abs(arr[i - 1] - arr[i]) <= 3 for i in range(1, len(arr)))
 
     res = 0
-    for line in read_data(1):
+    for line in read_data():
         report = list(map(int, line.split()))
         print()
         print("REPORT :", " ".join(map(str, report)))

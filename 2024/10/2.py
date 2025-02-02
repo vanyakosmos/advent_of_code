@@ -1,11 +1,12 @@
 from collections import deque
 
-from utils import noop, print_result, read_data
+from utils.display import print_result, noop
+from utils.loading import read_data
 
 
 def main():
     grid = []
-    for line in read_data(1):
+    for line in read_data():
         grid.append(list(map(int, line)))
 
     m, n = len(grid), len(grid[0])

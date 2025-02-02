@@ -1,4 +1,5 @@
-from utils import noop, print_result, read_data
+from utils.display import print_result, noop
+from utils.loading import read_data
 
 
 def show_grid(grid):
@@ -12,7 +13,7 @@ def main():
 
     reading_grid = True
     moves = ""
-    for line in read_data(1):
+    for line in read_data():
         if not line:
             reading_grid = False
         elif reading_grid:

@@ -1,7 +1,5 @@
-import heapq
-from copy import deepcopy
-
-from utils import Color, print_result, read_data, show_grid
+from utils.display import print_result
+from utils.loading import read_data
 
 e1 = """
 ###############

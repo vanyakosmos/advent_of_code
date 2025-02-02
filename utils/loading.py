@@ -1,12 +1,10 @@
 import contextvars
-import enum
 import sys
 from pathlib import Path
 from urllib.request import Request, urlopen
 
 YEAR_DAY = contextvars.ContextVar("year,day")
 RUNNING_EXAMPLE = len(sys.argv) > 1
-DIRS = ((0, 1), (1, 0), (0, -1), (-1, 0))
 
 
 def read_data(*examples) -> list[str]:
@@ -16,35 +14,6 @@ def read_data(*examples) -> list[str]:
         index = int(sys.argv[-1]) - 1
         data = examples[index]
     return data.strip(" \n").splitlines()
-
-
-def noop(*args, **kwargs):
-    pass
-
-
-def show_grid(grid: list[list[str]]):
-    for row in grid:
-        print(" ".join(row))
-    print()
-
-
-class Color(enum.StrEnum):
-    HEADER = "\033[95m"
-    BLUE = "\033[94m"
-    CYAN = "\033[96m"
-    GREEN = "\033[92m"
-    YELLOW = "\033[93m"
-    RED = "\033[91m"
-    END = "\033[0m"
-    BOLD = "\033[1m"
-    UNDERLINE = "\033[4m"
-
-    def __call__(self, v):
-        return f"{self}{v}{Color.END}"
-
-
-def print_result(res) -> None:
-    print("\n\nRESULT:", Color.YELLOW(res))
 
 
 def _get_meta() -> tuple[str, str]:

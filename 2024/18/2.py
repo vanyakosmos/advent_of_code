@@ -1,7 +1,8 @@
-import sys
 from heapq import heappop, heappush
 
-from utils import DIRS, print_result, read_data, RUNNING_EXAMPLE, show_grid
+from utils.display import print_result
+from utils.loading import read_data, RUNNING_EXAMPLE
+from utils.grid import DIRS
 
 e1 = """
 5,4
