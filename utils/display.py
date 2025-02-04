@@ -1,5 +1,7 @@
 import enum
 
+from .loading import RUNNING_EXAMPLE
+
 
 def noop(*args, **kwargs):
     pass
@@ -20,5 +22,10 @@ class Color(enum.StrEnum):
         return f"{self}{v}{Color.END}"
 
 
-def print_result(res) -> None:
-    print("\n\nRESULT:", Color.YELLOW(res))
+def print_result(res, expected=None) -> None:
+    print("\n")
+    if expected is not None and RUNNING_EXAMPLE:
+        print(Color.GREEN("PASS") if res == expected else Color.RED("FAIL"))
+        print(f"expected: {Color.YELLOW(expected)}, actual: {Color.YELLOW(res)}")
+    else:
+        print("result:", Color.YELLOW(res))

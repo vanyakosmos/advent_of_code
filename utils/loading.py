@@ -13,7 +13,9 @@ def read_data(*examples) -> list[str]:
     else:
         index = int(sys.argv[-1]) - 1
         data = examples[index]
-    return data.strip(" \n").splitlines()
+    lines = data.strip(" \n").splitlines()
+    print(f"input length: {len(lines)}\n")
+    return lines
 
 
 def _get_meta() -> tuple[str, str]:
