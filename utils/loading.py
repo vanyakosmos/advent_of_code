@@ -18,6 +18,17 @@ def read_data(*examples) -> list[str]:
     return lines
 
 
+def split_lines(lines: list[str]):
+    buff = []
+    for line in lines:
+        if line:
+            buff.append(line)
+        else:
+            yield buff
+            buff = []
+    yield buff
+
+
 def _get_meta() -> tuple[str, str]:
     if YEAR_DAY.get(None):
         return YEAR_DAY.get()
