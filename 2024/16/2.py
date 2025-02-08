@@ -1,5 +1,7 @@
+import heapq
+
 from utils.display import print_result
-from utils.loading import read_data
+from utils.loading import read_data, RUNNING_EXAMPLE
 
 e1 = """
 ###############
@@ -19,35 +21,15 @@ e1 = """
 ###############
 """
 
-e2 = """
-#################
-#...#...#...#..E#
-#.#.#.#.#.#.#.#.#
-#.#.#.#...#...#.#
-#.#.#.#.###.#.#.#
-#...#.#.#.....#.#
-#.#.#.#.#.#####.#
-#.#...#.#.#.....#
-#.#.#####.#.###.#
-#.#.#.......#...#
-#.#.###.#####.###
-#.#.#...#.....#.#
-#.#.#.#####.###.#
-#.#.#.........#.#
-#.#.#.#########.#
-#S#.............#
-#################
-"""
-
 
 def main():
-    # TODO
-    # true_min_score = 7036
-    true_min_score = 11048
-    # true_min_score = 135536
+    if RUNNING_EXAMPLE:
+        true_min_score = 7036
+    else:
+        true_min_score = 135536
 
     grid = []
-    for line in read_data(e2):
+    for line in read_data(e1):
         grid.append(list(line))
 
     m, n = len(grid), len(grid[0])
@@ -62,38 +44,20 @@ def main():
     dir = (0, 1)
     dirs = ((0, 1), (1, 0), (0, -1), (-1, 0))
 
-    queue = [(0, set(), (cy, cx), dir)]  # score, track, position, direction
+    queue = [(0, (cy, cx), dir, {(cy, cx)})]  # score, position, direction, track
     full_track = set()
-    visited = {}
+    position_scores = {}
 
-    i = 0
     while queue:
-        score, track, (cy, cx), (cdy, cdx) = queue.pop()
-
-        i += 1
-        if i % 100000 == 0:
-            print(
-                f"i={i // 100000:<5d} "
-                f"queue={len(queue):<10d} "
-                f"score={score:<10d} "
-                f"track={len(track):<10d} "
-                f"full_track={len(full_track)}",
-                end="\r",
-            )
+        score, (cy, cx), (cdy, cdx), track = heapq.heappop(queue)
 
         if score > true_min_score:
             continue
 
-        if (cy, cx) in track:
+        key = (cy, cx, cdy, cdx)
+        if key in position_scores and position_scores[key] < score:
             continue
-        track = track | {(cy, cx)}
-
-        # if (cy, cx) in visited and score > visited[(cy, cx)]:
-        #     continue
-        # visited[(cy, cx)] = score
-
-        if grid[cy][cx] == "E":
-            print(f"finish score {score}")
+        position_scores[key] = score
 
         if grid[cy][cx] == "E" and score == true_min_score:
             full_track.update(track)
@@ -107,30 +71,18 @@ def main():
                     extra_score += 2000
                 elif dy != cdy and dx != cdx:  # 90
                     extra_score += 1000
-                queue.append(
+                new_track = track | {(ny, nx)}
+                heapq.heappush(
+                    queue,
                     (
                         score + extra_score,
-                        track,
-                        # track | {(ny, nx)},
                         (ny, nx),
                         (dy, dx),
-                    )
+                        new_track,
+                    ),
                 )
-                # heapq.heappush(
-                #     queue,
-                #     (
-                #         score + extra_score,
-                #         track,
-                #         (ny, nx),
-                #         (dy, dx),
-                #     ),
-                # )
 
-    # for y, x in full_track:
-    #     grid[y][x] = Color.YELLOW("+")
-    # show_grid(grid)
-
-    print_result(len(full_track))
+    print_result(len(full_track), 45)
 
 
 if __name__ == "__main__":

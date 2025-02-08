@@ -44,7 +44,7 @@ e2 = """
 
 def main():
     grid = []
-    for line in read_data():
+    for line in read_data(e1, e2):
         grid.append(list(line))
 
     m, n = len(grid), len(grid[0])
