@@ -1,6 +1,6 @@
 import math
 
-from utils.display import print_result
+from utils.display import check_result, print_result
 from utils.loading import read_data
 
 e1 = """
@@ -21,8 +21,8 @@ def read_instructions(line):
     return [int(v) for v in vals]
 
 
-def main():
-    lines = read_data()
+def main(data=None):
+    lines = read_data(data)
     a = read_register(lines[0])
     b = read_register(lines[1])
     c = read_register(lines[2])
@@ -44,8 +44,6 @@ def main():
     i = 0
     while i < len(ins):
         op, val = ins[i], ins[i + 1]
-
-        print(f"i = {i:<10d}", end="\r")
 
         if op == 0:
             a = math.floor(a / (2 ** read_combo(val)))
@@ -75,8 +73,9 @@ def main():
             c = math.floor(a / (2 ** read_combo(val)))
             i += 2
 
-    print_result(",".join(output))
+    return ",".join(output)
 
 
 if __name__ == "__main__":
-    main()
+    check_result(main(e1), "4,6,3,5,6,3,5,2,1,0")
+    print_result(main())

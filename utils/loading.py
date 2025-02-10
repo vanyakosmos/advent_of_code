@@ -7,14 +7,11 @@ YEAR_DAY = contextvars.ContextVar("year,day")
 RUNNING_EXAMPLE = len(sys.argv) > 1
 
 
-def read_data(*examples) -> list[str]:
-    if len(sys.argv) == 1:
+def read_data(data=None) -> list[str]:
+    if data is None:
         data = _load_input_data()
-    else:
-        index = int(sys.argv[-1]) - 1
-        data = examples[index]
     lines = data.strip(" \n").splitlines()
-    print(f"input length: {len(lines)}\n")
+    # print(f"input length: {len(lines)}\n")
     return lines
 
 
@@ -27,6 +24,11 @@ def split_lines(lines: list[str]):
             yield buff
             buff = []
     yield buff
+
+
+def batched(values, size):
+    for i in range(0, len(values), size):
+        yield values[i : i + size]
 
 
 def _get_meta() -> tuple[str, str]:

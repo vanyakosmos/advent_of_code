@@ -22,10 +22,18 @@ class Color(enum.StrEnum):
         return f"{self}{v}{Color.END}"
 
 
-def print_result(res, expected=None) -> None:
-    print("\n")
-    if expected is not None and RUNNING_EXAMPLE:
-        print(Color.GREEN("PASS") if res == expected else Color.RED("FAIL"))
-        print(f"expected: {Color.YELLOW(expected)}, actual: {Color.YELLOW(res)}")
+def print_result(res) -> None:
+    print()
+    print("result:", Color.YELLOW(res))
+
+
+def check_result(actual, expected):
+    print()
+    if actual == expected:
+        print(Color.GREEN("PASS"))
+        print("result:", Color.YELLOW(actual))
+        print("\n" + "= " * 33 + "\n")
     else:
-        print("result:", Color.YELLOW(res))
+        print(Color.RED("FAIL"))
+        print(f"expected: {Color.YELLOW(expected)}, actual: {Color.YELLOW(actual)}")
+        raise SystemExit(1)

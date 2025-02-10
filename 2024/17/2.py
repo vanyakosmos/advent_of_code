@@ -1,7 +1,8 @@
 import math
+from typing import Iterator
 
-from utils.display import print_result
-from utils.loading import read_data
+from utils.display import check_result, print_result
+from utils.loading import batched, read_data
 
 e1 = """
 Register A: 2024
@@ -34,7 +35,6 @@ def read_combo(operand, a, b, c):
 
 
 def run(a, b, c, ins):
-    output = []
     i = 0
     while i < len(ins):
         op, val = ins[i], ins[i + 1]
@@ -58,7 +58,7 @@ def run(a, b, c, ins):
             i += 2
         elif op == 5:
             v = read_combo(val, a, b, c) % 8
-            output.append(v)
+            yield v
             i += 2
         elif op == 6:
             b = math.floor(a / (2 ** read_combo(val, a, b, c)))
@@ -66,29 +66,46 @@ def run(a, b, c, ins):
         elif op == 7:
             c = math.floor(a / (2 ** read_combo(val, a, b, c)))
             i += 2
-    return output
 
 
-def main():
-    # TODO
-    # brute force doesn't work
-    # try reverse engineer initial instruction to construct A
-    lines = read_data(e1)
+def main(data=None) -> int:
+    lines = read_data(data)
     b = read_register(lines[1])
     c = read_register(lines[2])
-
     ins = read_instructions(lines[4])
 
-    for a in range(0, 1000000):
-        output = run(a, b, c, ins)
-        if a % 100000 == 0:
-            print(a, output, end="\r")
-        if output == ins:
-            print_result(a)
-            break
-    else:
-        print_result("NOT FOUND")
+    shift = next(
+        (
+            operand
+            for opcode, operand in batched(ins, 2)
+            if opcode == 0 and 0 <= operand <= 3
+        ),
+        0,
+    )
+    input_bits = 7 + shift
+    output_cache = {a: next(run(a, b, c, ins)) for a in range(1 << input_bits)}
+
+    def find_quine_inputs() -> Iterator[int]:
+        def helper(a: int, pointer: int = 0) -> Iterator[int]:
+            if pointer >= len(ins):
+                yield a
+                return
+
+            for next_bits in range(1 << shift):
+                next_bits_shift = input_bits + (pointer - 1) * shift
+                next_a = a | (next_bits << next_bits_shift)
+
+                inp = next_a >> (pointer * shift)
+                if output_cache[inp] == ins[pointer]:
+                    yield from helper(next_a, pointer + 1)
+
+        for inp, out in output_cache.items():
+            if out == ins[0]:
+                yield from helper(inp, 1)
+
+    return min(find_quine_inputs())
 
 
 if __name__ == "__main__":
-    main()
+    check_result(main(e1), 117440)
+    print_result(main())
