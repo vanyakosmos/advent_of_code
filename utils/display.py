@@ -1,6 +1,5 @@
 import enum
-
-from .loading import RUNNING_EXAMPLE
+import warnings
 
 
 def noop(*args, **kwargs):
@@ -23,13 +22,13 @@ class Color(enum.StrEnum):
 
 
 def print_result(res) -> None:
-    print()
-    print("result:", Color.YELLOW(res))
+    warnings.warn(f"Deprecated in favor of `check_result`", DeprecationWarning)
+    check_result(res)
 
 
-def check_result(actual, expected):
+def check_result(actual, expected=None):
     print()
-    if actual == expected:
+    if expected is None or actual == expected:
         print(Color.GREEN("PASS"))
         print("result:", Color.YELLOW(actual))
         print("\n" + "= " * 33 + "\n")
