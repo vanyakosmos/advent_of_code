@@ -1,4 +1,6 @@
-from utils.display import print_result
+import re
+
+from utils.display import check_result
 from utils.loading import read_data, split_lines
 
 e1 = """
@@ -51,81 +53,100 @@ tgd XOR rvg -> z12
 tnw OR pbm -> gnj
 """
 
-e2 = """
-x00: 0
-x01: 1
-x02: 0
-x03: 1
-x04: 0
-x05: 1
-y00: 0
-y01: 0
-y02: 1
-y03: 1
-y04: 0
-y05: 1
 
-x00 AND y00 -> z05
-x01 AND y01 -> z02
-x02 AND y02 -> z01
-x03 AND y03 -> z03
-x04 AND y04 -> z04
-x05 AND y05 -> z00
-"""
+def get_value(reg, wires, xs, ys):
+    if re.match(r"x\d+", reg):
+        return xs[reg]
+    if re.match(r"y\d+", reg):
+        return ys[reg]
+    if reg in wires:
+        return wires[reg]
+
+    return None
 
 
-def read_number(wires, prefix: str):
-    zs = []
-    for wire, num in wires.items():
-        if wire.startswith(prefix):
-            zs.append((wire, num))
-    zs.sort(reverse=True)
-    bin = "".join(str(num) for _, num in zs)
-    res = int(bin, 2)
-    print(f"{prefix} = {res}")
-    return res
+def get_num(d, c):
+    top = max(int(i[1:]) for i in d if re.match(c + r"\d+", i))
+    ret = ""
+    for i in range(top, -1, -1):
+        try:
+            ret += str(d[c + f"{i:02d}"])
+        except KeyError:
+            return -1
+    return int(ret, 2)
 
 
-def main():
-    lines = read_data(e1, e2)
+def eval_loop(res, xs, ys):
+    wires = {}
+    while len(wires) < len(res):
+        for d in res:
+            op = res[d]
+
+            v1 = get_value(op[0], wires, xs, ys)
+            v2 = get_value(op[2], wires, xs, ys)
+
+            if v1 is not None and v2 is not None:
+                if op[1] == "AND":
+                    wires[d] = v1 & v2
+                elif op[1] == "OR":
+                    wires[d] = v1 | v2
+                elif op[1] == "XOR":
+                    wires[d] = v1 ^ v2
+    return get_num(wires, "z")
+
+
+def main(data=None):
+    lines = read_data(data)
     inputs_lines, ops_lines = split_lines(lines)
 
-    wires = {}
+    xs, ys = {}, {}
     for line in inputs_lines:
-        name, val = line.split(": ")
-        wires[name] = int(val)
+        d = xs if "x" in line else ys
+        ps = line.split(":")
+        d[ps[0]] = int(ps[1])
 
-    x = read_number(wires, "x")
-    y = read_number(wires, "y")
-
-    ops = set()
+    ops = {}
+    rev_ops = {}
     for line in ops_lines:
-        a, op, b, c = line.replace("-> ", "").split()
-        ops.add((a, b, c, op))
+        ps = line.split()
+        ops[ps[4]] = (ps[0], ps[1], ps[2])
+        rev_ops[(ps[0], ps[1], ps[2])] = ps[4]
+        rev_ops[(ps[2], ps[1], ps[0])] = ps[4]
 
-    def wire(a, b, c, op):
-        if op == "AND":
-            wires[c] = wires[a] & wires[b]
-        elif op == "OR":
-            wires[c] = wires[a] | wires[b]
+    top = max({int(d[1:]) for d in ops if re.match(r"z\d+", d)})
+
+    wrong_gates = set()
+
+    for i in range(1, top):
+        x = f"x{i:02d}"
+        y = f"y{i:02d}"
+        z = f"z{i:02d}"
+
+        res_op = ops[z]
+
+        xor_gate = rev_ops[(x, "XOR", y)]
+        and_gate = rev_ops[(x, "AND", y)]
+
+        if "XOR" not in res_op:
+            wrong_gates.add(z)
+
+        carry = [
+            set(o).difference({"XOR", xor_gate})
+            for o in ops.values()
+            if "XOR" in o and xor_gate in o
+        ]
+        if len(carry) != 1:
+            wrong_gates.add(xor_gate)
+            wrong_gates.add(and_gate)
         else:
-            wires[c] = wires[a] ^ wires[b]
+            carry = carry[0].pop()
+            xor2_gate = rev_ops[(xor_gate, "XOR", carry)]
+            if xor2_gate != z:
+                wrong_gates.add(xor2_gate)
 
-    space = ""
-    while ops:
-        batch = set()
-        for a, b, c, op in ops:
-            if a in wires and b in wires:
-                batch.add((a, b, c, op))
-
-        for a, b, c, op in batch:
-            print(f"{space}{a} {op} {b} -> {c}")
-            wire(a, b, c, op)
-        space += "  "
-        ops = ops - batch
-
-    print_result("", "z00,z01,z02,z05")
+    return ",".join(sorted(list(wrong_gates)))
 
 
 if __name__ == "__main__":
-    main()
+    # check_result(main(e1))
+    check_result(main())
