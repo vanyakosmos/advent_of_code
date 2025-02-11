@@ -1,16 +1,8 @@
 from functools import cache
 from itertools import pairwise, permutations
 
-from utils.display import check_result, print_result
+from utils.display import print_result
 from utils.loading import read_data
-
-e1 = """
-029A
-980A
-179A
-456A
-379A
-"""
 
 
 @cache
@@ -85,11 +77,10 @@ def get_min_cost(seq, depth):
 def main(data=None):
     res = 0
     for seq in read_data(data):
-        res += get_min_cost(seq, 2) * int(seq.replace("A", ""))
+        res += get_min_cost(seq, 25) * int(seq.replace("A", ""))
 
     return res
 
 
 if __name__ == "__main__":
-    check_result(main(e1), 126384)
     print_result(main())
