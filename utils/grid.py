@@ -1,4 +1,20 @@
-DIRS = ((0, 1), (1, 0), (0, -1), (-1, 0))
+from typing import TypeAlias
+
+Y: TypeAlias = int
+X: TypeAlias = int
+Point: TypeAlias = tuple[Y, X]
+DIRS: tuple[Point, ...] = ((0, 1), (1, 0), (0, -1), (-1, 0))
+
+
+def read_grid(lines: list[str]):
+    grid = []
+    for line in lines:
+        grid.append(list(line))
+    return grid
+
+
+def grid_dimensions(grid: list[list]) -> tuple[Y, X]:
+    return len(grid), len(grid[0])
 
 
 def show_grid(grid: list[list[str]]):

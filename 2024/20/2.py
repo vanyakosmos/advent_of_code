@@ -1,9 +1,8 @@
-from concurrent.futures.process import ProcessPoolExecutor
-from copy import deepcopy
-from heapq import heappop, heappush
+import heapq
+from itertools import product
 
-from utils.display import print_result
-from utils.grid import DIRS, iter_grid
+from utils.display import check_result, print_result
+from utils.grid import DIRS, iter_grid, Point, read_grid
 from utils.loading import read_data
 
 e1 = """
@@ -25,65 +24,54 @@ e1 = """
 """
 
 
-def run(grid, cy, cx, ey, ex):
-    m, n = len(grid), len(grid[0])
-    queue = [(0, (cy, cx))]  # number of steps, position
-    visited = set()
+def find_distances(start: Point, grid: list[list[str]]):
+    queue = [(0, start)]
+    distances = {(start): 0}
+
     while queue:
-        steps, (cy, cx) = heappop(queue)
+        score, (cy, cx) = heapq.heappop(queue)
 
-        if cy == ey and cx == ex:
-            return steps
-
-        if (cy, cx) in visited:
+        if (cy, cx) in distances and distances[(cy, cx)] < score:
             continue
-        visited.add((cy, cx))
 
         for dy, dx in DIRS:
             ny, nx = cy + dy, cx + dx
-            if 0 <= ny < m and 0 <= nx < n and grid[ny][nx] != "#":
-                heappush(queue, (steps + 1, (ny, nx)))
-    return -1
+            if grid[ny][nx] in ".SE":
+                if (ny, nx) not in distances or distances[(ny, nx)] > score + 1:
+                    distances[(ny, nx)] = score + 1
+                    heapq.heappush(queue, (score + 1, (ny, nx)))
+
+    return distances
 
 
-def run_on_new_grid(grid, y, x, cy, cx, ey, ex):
-    print((y, x))
-    new_grid = deepcopy(grid)
-    new_grid[y][x] = "."
-    return run(new_grid, cy, cx, ey, ex)
-
-
-def main():
-    # TODO
-    grid = []
-    for line in read_data(e1):
-        grid.append(list(line))
-
-    m, n = len(grid), len(grid[0])
-    cy, cx = 0, 0
-    ey, ex = 0, 0
-    for e, y, x in iter_grid(grid):
-        if e == "S":
-            cy, cx = y, x
-        elif e == "E":
-            ey, ex = y, x
-
+def count_cheats(distances: dict[Point, int], min_time: int):
+    cheat_size = 20
     res = 0
-    optimal_steps = run(grid, cy, cx, ey, ex)
+    for py, px in distances.keys():
+        for dy, dx in product(range(-cheat_size, cheat_size + 1), repeat=2):
+            if abs(dx) + abs(dy) > cheat_size:
+                continue
+            ny, nx = py + dy, px + dx
+            if (ny, nx) in distances:
+                initial_cost = distances[(py, px)] - distances[(ny, nx)]
+                cheat_cost = abs(py - ny) + abs(px - nx)
+                if (initial_cost - cheat_cost) >= min_time:
+                    res += 1
+    return res
 
-    with ProcessPoolExecutor() as executor:
-        futures = []
-        for e, y, x in iter_grid(grid):
-            if 1 <= y < m - 1 and 1 <= x < n - 1 and grid[y][x] == "#":
-                f = executor.submit(run_on_new_grid, grid, y, x, cy, cx, ey, ex)
-                futures.append(f)
-        for f in futures:
-            steps = f.result()
-            if optimal_steps - steps >= 100:
-                res += 1
 
-    print_result(res)
+def main(min_time: int, data=None):
+    lines = read_data(data)
+    start: Point = (0, 0)
+    grid = read_grid(lines)
+    for c, y, x in iter_grid(grid):
+        if c == "S":
+            start = (y, x)
+
+    distances = find_distances(start, grid)
+    return count_cheats(distances, min_time=min_time)
 
 
 if __name__ == "__main__":
-    main()
+    check_result(main(min_time=50, data=e1), 285)
+    print_result(main(min_time=100))
