@@ -1,4 +1,4 @@
-import importlib
+import runpy
 from pathlib import Path
 
 from utils.loading import YEAR_DAY
@@ -11,9 +11,8 @@ def main():
     year = last.parent.parent.name
     day = last.parent.name
     part = last.stem
-    module = importlib.import_module(f"{year}.{day}.{part}")
     YEAR_DAY.set((year, day))
-    module.main()
+    runpy.run_path(f"{year}/{day}/{part}.py", run_name="__main__")
 
 
 if __name__ == "__main__":

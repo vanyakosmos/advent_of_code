@@ -50,7 +50,7 @@ def _load_input_data() -> str:
     if cache_file.exists():
         return cache_file.read_text()
 
-    req = Request(f"https://adventofcode.com/{year}/day/{day}/input")
+    req = Request(f"https://adventofcode.com/{year}/day/{int(day)}/input")
     aoc_session = (root / ".session").read_text()
     req.add_header("Cookie", f"session={aoc_session}")
     response = urlopen(req)
@@ -59,3 +59,14 @@ def _load_input_data() -> str:
     cache_dir.mkdir(exist_ok=True)
     cache_file.write_text(content)
     return content
+
+
+def main():
+    YEAR_DAY.set(("2025", "01"))
+    content = _load_input_data()
+    assert content
+    print("loaded")
+
+
+if __name__ == "__main__":
+    main()
