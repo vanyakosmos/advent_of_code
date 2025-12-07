@@ -10,7 +10,7 @@ RUNNING_EXAMPLE = len(sys.argv) > 1
 def read_data(data=None) -> list[str]:
     if data is None:
         data = _load_input_data()
-    lines = data.strip(" \n").splitlines()
+    lines = data.strip("\n").splitlines()
     # print(f"input length: {len(lines)}\n")
     return lines
 
